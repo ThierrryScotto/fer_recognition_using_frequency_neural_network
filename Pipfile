@@ -12,6 +12,8 @@ face_recognition  = "*"
 pandas = "*"
 ipykernel = "*"
 matplotlib = "*"
+cuda-python = "*"
+tensorflow = "*"
 
 [dev-packages]
 
