@@ -9,7 +9,7 @@ class ShapePredictor:
     # URL do arquivo shape_predictor_68_face_landmarks.dat.bz2
     __url: str = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
     __file_name: str = 'shape_predictor_68_face_landmarks'
-    __path: str = "./content/model/"
+    __path: str = "./models/"
 
 
     def __init__(self, output: Optional[str] = None):
