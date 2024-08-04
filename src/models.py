@@ -1,47 +1,49 @@
 
-from typing import Optional
 from os import makedirs, path
 import requests
 import bz2
+from src.logging import get_logger
 
+log = get_logger('models.py')
 class ShapePredictor:
 
     # URL do arquivo shape_predictor_68_face_landmarks.dat.bz2
     __url: str = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
     __file_name: str = 'shape_predictor_68_face_landmarks'
     __path: str = "./content/model/"
+    __dat_path: str = path.join(__path, __file_name + '.dat')
+    __compressed_dat_path = __dat_path + '.dat.bz2'
 
 
-    def __init__(self, output: Optional[str] = None):
-        self.download(output)
+    def __new__(cls):
+        ShapePredictor.download()
+        return ShapePredictor.__dat_path
 
-    def download(self, output: Optional[str] = None):
+    @staticmethod
+    def download():
 
-        if not output:
-            output = self.__path
-        makedirs(output, exist_ok=True)
-        compressed_dat_path = path.join(output, self.__file_name + '.dat.bz2')
-        dat_path = path.join(output, self.__file_name + '.bz2')
-        
+        makedirs(ShapePredictor.__path, exist_ok=True)
 
-        if not path.exists(compressed_dat_path) and not path.exists(dat_path):    
-            with open(compressed_dat_path, 'wb') as compressed_file:
-                response = requests.get(self.__url, stream=True)
+        if not path.exists(ShapePredictor.__compressed_dat_path) and not path.exists(ShapePredictor.__dat_path):    
+            with open(ShapePredictor.__compressed_dat_path, 'wb') as compressed_file:
+                log.debug(f"Downloading file: {ShapePredictor.__compressed_dat_path}")
+                response = requests.get(ShapePredictor.__url, stream=True)
                 for chunk in response.iter_content(chunk_size=1024): 
                     if chunk: # filter out keep-alive new chunks
                         compressed_file.write(chunk)
 
 
         # Descompactar o arquivo
-        if not path.exists(dat_path):
-            with bz2.BZ2File(compressed_dat_path) as f_in:
-                with open(dat_path, 'wb') as f_out:
+        if not path.exists(ShapePredictor.__dat_path):
+            with bz2.BZ2File(ShapePredictor.__compressed_dat_path) as f_in:
+                with open(ShapePredictor.__dat_path, 'wb') as f_out:
                     f_out.write(f_in.read())
 
-        print(f"Arquivo descompactado salvo em: {dat_path}")
+            log.debug(f"Saving file: {ShapePredictor.__dat_path}")
 
         # Verificar se o arquivo foi descompactado corretamente
-        if path.exists(dat_path):
-            print("Arquivo descompactado com sucesso!")
+        if path.exists(ShapePredictor.__dat_path):
+            log.info(f"Loaded model: {ShapePredictor.__dat_path}")
         else:
-            print("Falha ao descompactar o arquivo.")
+            log.error(f"Failed to load model: {ShapePredictor.__dat_path}")
+            raise FileNotFoundError(f"Could not find file: {ShapePredictor.__dat_path}")
