@@ -13,7 +13,7 @@ pandas = "*"
 ipykernel = "*"
 matplotlib = "*"
 cuda-python = "*"
-tensorflow = "*"
+tensorflow = "==2.17"
 
 [dev-packages]
 

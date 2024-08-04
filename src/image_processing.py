@@ -87,10 +87,10 @@ class ImagePreProcessor:
 
             # Recortar a imagem
             cropped_face = pil_image.crop((left, top, right, bottom))
-
+            image = cropped_face.resize((32, 32))
             # Salvar a imagem recortada com o nome original acrescido de "face"
             base_filename, ext = os.path.splitext(os.path.basename(image_path))
             face_image_path = os.path.join(output_folder, f'{base_filename}_face{ext}')
-            cropped_face.save(face_image_path)
+            image.save(face_image_path)
             log.info(f'Face {i+1} saved in file: {face_image_path}')
 

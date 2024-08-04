@@ -30,3 +30,10 @@ def resize_dct(dct_image: np.ndarray, gamma: float) -> np.ndarray:
     h, w = dct_image.shape
     new_h, new_w = int(h * gamma), int(w * gamma)
     return dct_image[:new_h, :new_w]
+
+def find_largest_shape(matrices):
+    largest_shape = (0, 0)
+    for matrix in matrices:
+        if matrix.shape > largest_shape:
+            largest_shape = matrix.shape
+    return largest_shape
